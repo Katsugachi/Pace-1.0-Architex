@@ -1,5 +1,5 @@
 # Pace-Architex
-Highly capable open source local AI model under 800mb<br>
+Capable open source local AI model under 800mb<br>
 Added coding capability and self loop checking <br>
 Lite version of pace designed to have a GUI<br>
 Added internet search, allowing for more relevant answers. <br><br>
