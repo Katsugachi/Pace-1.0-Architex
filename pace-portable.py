@@ -15,12 +15,18 @@ GUI_FILE = ROOT_DIR / "index.html"
 BROWSER_OPEN_NEW_TAB = 2
 
 
-def ensure_virtualenv() -> None:
+def ensure_virtualenv() -> bool:
     if VENV_PYTHON.exists():
-        return
+        return True
     print("Setting up environment for the first time...")
-    builder = venv.EnvBuilder(with_pip=True)
-    builder.create(VENV_DIR)
+    try:
+        builder = venv.EnvBuilder(with_pip=True)
+        builder.create(VENV_DIR)
+        return True
+    except Exception as exc:
+        print(f"Failed to create virtual environment at '{VENV_DIR}': {exc}")
+        print("Check disk space and write permissions for this folder, then try again.")
+        return False
 
 
 def has_module(module_name: str) -> bool:
@@ -32,28 +38,44 @@ def has_module(module_name: str) -> bool:
     return result.returncode == 0
 
 
-def install_dependencies() -> None:
+def install_dependencies() -> bool:
     if has_module("websockets"):
-        return
+        return True
 
-    pip_base_cmd = [str(VENV_PYTHON), "-m", "pip", "install", "--upgrade", "pip", "setuptools", "wheel"]
-    subprocess.check_call(pip_base_cmd)
+    try:
+        pip_base_cmd = [str(VENV_PYTHON), "-m", "pip", "install", "--upgrade", "pip", "setuptools", "wheel"]
+        subprocess.check_call(pip_base_cmd)
+    except subprocess.CalledProcessError as exc:
+        print(f"Failed to prepare pip tooling in the portable environment: {exc}")
+        print("Check internet connection or disk space, then try again.")
+        return False
 
     if WHEELHOUSE_DIR.is_dir():
         print("Using local wheelhouse for portable USB install...")
-        subprocess.check_call(
-            [
-                str(VENV_PYTHON),
-                "-m",
-                "pip",
-                "install",
-                "--no-index",
-                f"--find-links={WHEELHOUSE_DIR}",
-                "websockets",
-            ]
-        )
-    else:
+        try:
+            subprocess.check_call(
+                [
+                    str(VENV_PYTHON),
+                    "-m",
+                    "pip",
+                    "install",
+                    "--no-index",
+                    f"--find-links={WHEELHOUSE_DIR}",
+                    "websockets",
+                ]
+            )
+            return True
+        except subprocess.CalledProcessError as exc:
+            print(f"Wheelhouse install failed: {exc}")
+            print("Trying online install for websockets...")
+
+    try:
         subprocess.check_call([str(VENV_PYTHON), "-m", "pip", "install", "websockets"])
+        return True
+    except subprocess.CalledProcessError as exc:
+        print(f"Online install failed: {exc}")
+        print("If internet is unavailable, add compatible wheels to a local 'wheelhouse/' folder.")
+        return False
 
 
 def open_gui() -> None:
@@ -70,8 +92,10 @@ def main() -> int:
     if not BACKEND_SCRIPT.exists() or not GUI_FILE.exists():
         print("Missing required project files. Run this from the Pace project folder.")
         return 1
-    ensure_virtualenv()
-    install_dependencies()
+    if not ensure_virtualenv():
+        return 1
+    if not install_dependencies():
+        return 1
     open_gui()
     return run_backend()
 

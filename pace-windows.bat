@@ -16,12 +16,13 @@ if not defined PY_CMD (
 
 if not defined PY_CMD (
     echo Could not find Python 3. Install Python 3 and try again.
-    pause
-    exit /b 1
+    set "EXIT_CODE=1"
+    goto :finish
 )
 
 %PY_CMD% "%~dp0pace-portable.py"
 set "EXIT_CODE=%errorlevel%"
 
+:finish
 pause
 exit /b %EXIT_CODE%
