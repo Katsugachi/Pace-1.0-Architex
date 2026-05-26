@@ -1,7 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
-# Go to the directory this script lives in (like %~dp0)
 cd "$(cd "$(dirname "$0")" && pwd)"
 
 if command -v python3.12 >/dev/null 2>&1; then

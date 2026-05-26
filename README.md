@@ -17,8 +17,13 @@ python pace.py
 ```
 
 # QuickStart
-Basically just download entire thing and unzip. <br><br>Run `pace-windows.bat` for Windows or `pace-mac.command` for macOS. Those launchers create the virtual environment, install the WebSocket dependency, open the GUI, and start the backend. <br>
-Additionally, if huggingface is blocked, you can download Gemma from the releases section of this repo and drop it straight into .pace-agent
+Basically just download entire thing and unzip to your USB or local drive. <br><br>Run:
+- `pace-windows.bat` on Windows
+- `pace-mac.command` on macOS
+- `pace-linux.sh` on Linux
+
+All launchers now call `pace-portable.py`, which keeps setup inside this folder (`.venv` + `.pace_agent`), opens the GUI, and starts the backend from a single click. <br>
+Additionally, if huggingface is blocked, you can download Gemma from the releases section of this repo and drop it straight into `.pace_agent`
 
 ## Main Pace Repo
 Main: https://github.com/Katsugachi/Pace-1.0/tree/main<br>
@@ -26,8 +31,11 @@ Lite: https://github.com/Katsugachi/Pace-Lite-1.0<br>
 Architex: https://github.com/Katsugachi/Pace-1.0-Architex/tree/main
 
 ## Start
-Basically just download entire thing and unzip. <br><br>Run `pace-windows.bat` for Windows or `pace-mac.command` for macOS. Those launchers create the virtual environment, install the WebSocket dependency, open the GUI, and start the backend. <br>
-Additionally, if huggingface is blocked, you can download Gemma from the releases section of this repo and drop it straight into .pace-agent
+Basically just download entire thing and unzip to USB or local storage. <br><br>Run `pace-windows.bat` for Windows, `pace-mac.command` for macOS, or `pace-linux.sh` for Linux. The one-click launcher flow is fully relative-path based, so moving the folder between drives keeps it runnable.
+
+### Portable USB note
+- For offline dependency install, optionally add a `wheelhouse/` folder next to `pace-portable.py` containing required wheels (currently `websockets` and its transitive wheels for your target OS/Python).
+- `llama-cpp-python` is still platform/compiler-specific and remains a manual install when needed, as documented in terminal startup messages.
 ## Model setup note
 The GUI can now connect even if the local model is unavailable, but full responses still require `llama-cpp-python` to be installed successfully. If the backend starts in degraded mode, follow the setup instructions printed in the terminal, then restart `dev-pace.py`.
 

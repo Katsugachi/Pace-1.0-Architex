@@ -1,19 +1,27 @@
 @echo off
 cd /d "%~dp0"
+setlocal
 
-if not exist ".venv" (
-    echo Setting up environment for the first time...
-    py -3.12 -m venv .venv
+set "PY_CMD="
+py -3.12 --version >nul 2>nul
+if %errorlevel%==0 set "PY_CMD=py -3.12"
+if not defined PY_CMD (
+    py -3 --version >nul 2>nul
+    if %errorlevel%==0 set "PY_CMD=py -3"
+)
+if not defined PY_CMD (
+    python --version >nul 2>nul
+    if %errorlevel%==0 set "PY_CMD=python"
 )
 
-call .venv\Scripts\activate.bat
+if not defined PY_CMD (
+    echo Could not find Python 3. Install Python 3 and try again.
+    pause
+    exit /b 1
+)
 
-python -m pip install --upgrade pip setuptools wheel websockets -q
-
-:: Open the GUI in the default browser (non-blocking)
-start "" "%~dp0index.html"
-
-:: Start the PACE backend
-python dev-pace.py
+%PY_CMD% "%~dp0pace-portable.py"
+set "EXIT_CODE=%errorlevel%"
 
 pause
+exit /b %EXIT_CODE%
