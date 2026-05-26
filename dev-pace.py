@@ -1255,9 +1255,14 @@ STRAY_TOOL_CALL_RE = re.compile(
     r')',
     re.DOTALL | re.IGNORECASE,
 )
-# Matches bare URLs (http/https/ftp); excludes characters that cannot appear
-# in a URL and commonly delimit HTML/markdown links or sentence boundaries.
-BARE_URL_RE = re.compile(r'https?://[^\s<>"\'()\[\]]+|ftp://[^\s<>"\'()\[\]]+', re.IGNORECASE)
+# Matches bare URLs (http/https/ftp). The last character of the match is
+# required to be a non-punctuation character so that trailing sentence
+# punctuation (e.g. "https://example.com.") is not consumed.
+BARE_URL_RE = re.compile(
+    r'https?://[^\s<>"\'()\[\]]*[^\s<>"\'()\[\].,;:!?]'
+    r'|ftp://[^\s<>"\'()\[\]]*[^\s<>"\'()\[\].,;:!?]',
+    re.IGNORECASE,
+)
 LIST_FILES_TOOL_RE = re.compile(r"<list_files\s*/>")
 READ_FILE_TOOL_RE = re.compile(r'<read_file\s+path=(["\'])([^"\']+)\1\s*/>', re.DOTALL)
 WRITE_FILE_TOOL_RE = re.compile(r'<write_file\s+path=(["\'])([^"\']+)\1\s*>(.*?)</write_file>', re.DOTALL)
@@ -1370,15 +1375,15 @@ def normalize_model_output(text):
     cleaned = re.sub(r"\s+([,.;:!?])", r"\1", cleaned)
     cleaned = re.sub(r",\s*,+", ", ", cleaned)
     cleaned = re.sub(r"\(\s*\)", "", cleaned)
-    cleaned = re.sub(r"\n{3,}", "\n\n", cleaned).strip()
 
     # Strip stray tool call XML and bare URLs that the model should not emit
     # in plain-text responses.  Only do this when the whole response is NOT a
     # standalone tool call (those are handled elsewhere).
     if not parse_tool_call(cleaned):
-        cleaned = STRAY_TOOL_CALL_RE.sub("", cleaned).strip()
-        cleaned = BARE_URL_RE.sub("", cleaned).strip()
-        cleaned = re.sub(r"\n{3,}", "\n\n", cleaned).strip()
+        cleaned = STRAY_TOOL_CALL_RE.sub("", cleaned)
+        cleaned = BARE_URL_RE.sub("", cleaned)
+
+    cleaned = re.sub(r"\n{3,}", "\n\n", cleaned).strip()
 
     return cleaned, wrappers_removed
 
