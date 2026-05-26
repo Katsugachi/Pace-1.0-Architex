@@ -1242,6 +1242,13 @@ def _auto_inject_file_context(user_text):
 
 WRAPPER_TAGS_RE = re.compile(r"^\s*<(response|text)\b[^>]*>\s*(.*?)\s*</\1>\s*$", re.IGNORECASE | re.DOTALL)
 EDGE_WRAPPER_TAG_RE = re.compile(r"^\s*</?(response|text)\b[^>]*>\s*|\s*</?(response|text)\b[^>]*>\s*$", re.IGNORECASE)
+# Matches any tool call XML that may leak into a plain-text response
+STRAY_TOOL_CALL_RE = re.compile(
+    r'<(?:list_files\s*/|read_file\s[^>]*/|write_file\s[\s\S]*?</write_file>|edit_file\s[\s\S]*?</edit_file>|run_command\s[^>]*/|grep_files\s[^>]*/)>?',
+    re.DOTALL | re.IGNORECASE,
+)
+# Matches bare URLs (http/https/ftp)
+BARE_URL_RE = re.compile(r'https?://\S+|ftp://\S+', re.IGNORECASE)
 LIST_FILES_TOOL_RE = re.compile(r"<list_files\s*/>")
 READ_FILE_TOOL_RE = re.compile(r'<read_file\s+path=(["\'])([^"\']+)\1\s*/>', re.DOTALL)
 WRITE_FILE_TOOL_RE = re.compile(r'<write_file\s+path=(["\'])([^"\']+)\1\s*>(.*?)</write_file>', re.DOTALL)
@@ -1356,6 +1363,13 @@ def normalize_model_output(text):
     cleaned = re.sub(r"\(\s*\)", "", cleaned)
     cleaned = re.sub(r"\n{3,}", "\n\n", cleaned).strip()
 
+    # Strip stray tool call XML and bare URLs that the model should not emit
+    # in plain-text responses.  Only do this when the whole response is NOT a
+    # standalone tool call (those are handled elsewhere).
+    if not parse_tool_call(cleaned):
+        cleaned = STRAY_TOOL_CALL_RE.sub("", cleaned).strip()
+        cleaned = BARE_URL_RE.sub("", cleaned).strip()
+        cleaned = re.sub(r"\n{3,}", "\n\n", cleaned).strip()
 
     return cleaned, wrappers_removed
 
@@ -2160,7 +2174,8 @@ Rules:
 - Prefer safe, production-ready coding practices and avoid patterns that can break at runtime.
 - After a tool call, wait for the result before doing anything else.
 - When web research is provided, rely on it, cross-reference claims, prioritize up-to-date evidence, and clearly call out uncertainty when sources conflict.
-- When web research is provided, include the source URLs you used in your final answer.
+- Never include URLs, hyperlinks, or web addresses in your responses.
+- Never output tool call XML tags in a regular text response. Tool call XML is only valid as your entire response and only when you intend to invoke a tool.
 - NEVER write or edit a .pdf file.
 - Keep responses short and direct.
 - Address the user directly, they are human, not an external observer.
