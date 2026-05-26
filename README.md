@@ -1,3 +1,7 @@
+<div align="left">
+  <img src="pace.jpg" alt="Pace 1.0" width="55%">
+</div>
+<br>
 # Pace-Architex
 Capable open source local AI model under 800mb<br>
 Added coding capability and self loop checking <br>
