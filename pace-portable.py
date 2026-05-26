@@ -12,6 +12,7 @@ VENV_PYTHON = VENV_DIR / ("Scripts/python.exe" if os.name == "nt" else "bin/pyth
 WHEELHOUSE_DIR = ROOT_DIR / "wheelhouse"
 BACKEND_SCRIPT = ROOT_DIR / "dev-pace.py"
 GUI_FILE = ROOT_DIR / "index.html"
+BROWSER_OPEN_NEW_TAB = 2
 
 
 def ensure_virtualenv() -> None:
@@ -22,7 +23,19 @@ def ensure_virtualenv() -> None:
     builder.create(VENV_DIR)
 
 
+def has_module(module_name: str) -> bool:
+    result = subprocess.run(
+        [str(VENV_PYTHON), "-c", f"import {module_name}"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    return result.returncode == 0
+
+
 def install_dependencies() -> None:
+    if has_module("websockets"):
+        return
+
     pip_base_cmd = [str(VENV_PYTHON), "-m", "pip", "install", "--upgrade", "pip", "setuptools", "wheel"]
     subprocess.check_call(pip_base_cmd)
 
@@ -44,7 +57,7 @@ def install_dependencies() -> None:
 
 
 def open_gui() -> None:
-    webbrowser.open(GUI_FILE.resolve().as_uri(), new=2)
+    webbrowser.open(GUI_FILE.resolve().as_uri(), new=BROWSER_OPEN_NEW_TAB)
 
 
 def run_backend() -> int:
