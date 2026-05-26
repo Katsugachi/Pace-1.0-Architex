@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -e
 
 cd "$(cd "$(dirname "$0")" && pwd)"
 
@@ -15,6 +14,7 @@ else
   exit 1
 fi
 
+set -e
 "$PYTHON_BIN" "pace-portable.py"
 EXIT_CODE=$?
 read -r -p "Press Enter to exit..."

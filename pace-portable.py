@@ -79,7 +79,11 @@ def install_dependencies() -> bool:
 
 
 def open_gui() -> None:
-    webbrowser.open(GUI_FILE.resolve().as_uri(), new=BROWSER_OPEN_NEW_TAB)
+    try:
+        webbrowser.open(GUI_FILE.resolve().as_uri(), new=BROWSER_OPEN_NEW_TAB)
+    except Exception as exc:
+        print(f"Could not open browser automatically: {exc}")
+        print("Please open index.html manually from this folder.")
 
 
 def run_backend() -> int:

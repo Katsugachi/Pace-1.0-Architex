@@ -35,7 +35,7 @@ Basically just download entire thing and unzip to USB or local storage. <br><br>
 
 ### Portable USB note
 - For offline dependency install, optionally add a `wheelhouse/` folder next to `pace-portable.py` containing required wheels (currently `websockets` and its transitive wheels for your target OS/Python).
-- `llama-cpp-python` is still platform/compiler-specific and remains a manual install when needed, as documented in terminal startup messages.
+- `llama-cpp-python` is still platform/compiler-specific and remains a manual install when needed, as documented in messages printed by `dev-pace.py` at startup.
 ## Model setup note
 The GUI can now connect even if the local model is unavailable, but full responses still require `llama-cpp-python` to be installed successfully. If the backend starts in degraded mode, follow the setup instructions printed in the terminal, then restart `dev-pace.py`.
 
