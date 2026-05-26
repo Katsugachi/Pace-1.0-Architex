@@ -8,11 +8,10 @@ from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent
 VENV_DIR = ROOT_DIR / ".venv"
-VENV_PYTHON = VENV_DIR / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+VENV_PYTHON = (VENV_DIR / "Scripts" / "python.exe") if os.name == "nt" else (VENV_DIR / "bin" / "python")
 WHEELHOUSE_DIR = ROOT_DIR / "wheelhouse"
 BACKEND_SCRIPT = ROOT_DIR / "dev-pace.py"
 GUI_FILE = ROOT_DIR / "index.html"
-BROWSER_OPEN_NEW_TAB = 2
 
 
 def ensure_virtualenv() -> bool:
@@ -80,7 +79,7 @@ def install_dependencies() -> bool:
 
 def open_gui() -> None:
     try:
-        webbrowser.open(GUI_FILE.resolve().as_uri(), new=BROWSER_OPEN_NEW_TAB)
+        webbrowser.open(GUI_FILE.resolve().as_uri(), new=2)
     except Exception as exc:
         print(f"Could not open browser automatically: {exc}")
         print("Please open index.html manually from this folder.")
