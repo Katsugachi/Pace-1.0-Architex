@@ -11,9 +11,9 @@ python -m pip install --upgrade pip setuptools wheel
 python pace.py
 ```
 ## Main Pace Repo
-https://github.com/Katsugachi/Pace-1.0/tree/main<br>
-https://github.com/Katsugachi/Pace-Lite-1.0<br>
-https://github.com/Katsugachi/Pace-1.0-Architex/tree/main
+Main: https://github.com/Katsugachi/Pace-1.0/tree/main<br>
+Lite: https://github.com/Katsugachi/Pace-Lite-1.0<br>
+Architex: https://github.com/Katsugachi/Pace-1.0-Architex/tree/main
 ## Start
 Basically just download entire thing and unzip. <br><br>Run `pace-windows.bat` for Windows or `pace-mac.command` for macOS. Those launchers create the virtual environment, install the WebSocket dependency, open the GUI, and start the backend. <br>
 Additionally, if huggingface is blocked, you can download Gemma from the releases section of this repo and drop it straight into .pace-agent
