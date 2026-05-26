@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 # Go to the directory this script lives in (like %~dp0)
 cd "$(cd "$(dirname "$0")" && pwd)"
