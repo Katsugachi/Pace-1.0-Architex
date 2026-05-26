@@ -7,7 +7,7 @@ Capable open source local AI model under 800mb<br>
 Added coding capability and self loop checking <br>
 Lite version of pace designed to have a GUI<br>
 Added internet search, allowing for more relevant answers. <br><br>
-Debugging Script:
+Debugging Script: <br>
 ```powershell
 py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
