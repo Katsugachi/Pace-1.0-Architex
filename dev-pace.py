@@ -1290,6 +1290,7 @@ UNFENCED_CODE_LINE_RE = re.compile(
     re.IGNORECASE,
 )
 SQL_STATEMENT_LINE_RE = re.compile(r"^\s*(?:SELECT|INSERT|UPDATE|DELETE)\b", re.IGNORECASE)
+# Accept plain @@CODE@@ plus indexed forms (e.g. @@CODE0@@ / @@CODE_0@@).
 PLACEHOLDER_TOKEN_RE = re.compile(r"@@([A-Za-z]+(?:_\d+|\d+)?)@@")
 CODE_PLACEHOLDER_NAME_RE = re.compile(r"code(?:_\d+|\d+)?")
 PLACEHOLDER_MAPPING_RE = re.compile(
