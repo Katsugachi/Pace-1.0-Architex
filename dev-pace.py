@@ -1290,14 +1290,14 @@ UNFENCED_CODE_LINE_RE = re.compile(
     re.IGNORECASE,
 )
 SQL_STATEMENT_LINE_RE = re.compile(r"^\s*(?:SELECT|INSERT|UPDATE|DELETE)\b", re.IGNORECASE)
-PLACEHOLDER_TOKEN_RE = re.compile(r"@@([A-Za-z]+(?:_?\d+)?)@@")
-CODE_PLACEHOLDER_NAME_RE = re.compile(r"code(?:_?\d+)?")
+PLACEHOLDER_TOKEN_RE = re.compile(r"@@([A-Za-z]+(?:_\d+|\d+)?)@@")
+CODE_PLACEHOLDER_NAME_RE = re.compile(r"code(?:_\d+|\d+)?")
 PLACEHOLDER_MAPPING_RE = re.compile(
-    r"(@@[A-Za-z]+(?:_?\d+)?@@)\s*(?:=|:|-)\s*(?:`([^`\n]+)`|\"([^\"\n]+)\"|'([^'\n]+)')",
+    r"(@@[A-Za-z]+(?:_\d+|\d+)?@@)\s*(?:=|:|-)\s*(?:`([^`\n]+)`|\"([^\"\n]+)\"|'([^'\n]+)')",
     re.IGNORECASE,
 )
 PLACEHOLDER_MAPPING_LINE_RE = re.compile(
-    r"^\s*@@[A-Za-z]+(?:_?\d+)?@@\s*(?:=|:|-)\s*(?:`[^`\n]+`|\"[^\"\n]+\"|'[^'\n]+')\s*$",
+    r"^\s*@@[A-Za-z]+(?:_\d+|\d+)?@@\s*(?:=|:|-)\s*(?:`[^`\n]+`|\"[^\"\n]+\"|'[^'\n]+')\s*$",
     re.IGNORECASE | re.MULTILINE,
 )
 CODE_PLACEHOLDER_RE = re.compile(
