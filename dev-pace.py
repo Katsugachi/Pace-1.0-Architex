@@ -1242,13 +1242,22 @@ def _auto_inject_file_context(user_text):
 
 WRAPPER_TAGS_RE = re.compile(r"^\s*<(response|text)\b[^>]*>\s*(.*?)\s*</\1>\s*$", re.IGNORECASE | re.DOTALL)
 EDGE_WRAPPER_TAG_RE = re.compile(r"^\s*</?(response|text)\b[^>]*>\s*|\s*</?(response|text)\b[^>]*>\s*$", re.IGNORECASE)
-# Matches any tool call XML that may leak into a plain-text response
+# Matches any tool call XML that may leak into a plain-text response.
+# Self-closing tags end with />, paired tags include their closing tag.
 STRAY_TOOL_CALL_RE = re.compile(
-    r'<(?:list_files\s*/|read_file\s[^>]*/|write_file\s[\s\S]*?</write_file>|edit_file\s[\s\S]*?</edit_file>|run_command\s[^>]*/|grep_files\s[^>]*/)>?',
+    r'<(?:'
+    r'list_files\s*/>'
+    r'|read_file\s[^>]*/>'
+    r'|run_command\s[^>]*/>'
+    r'|grep_files\s[^>]*/>'
+    r'|write_file\b[\s\S]*?</write_file>'
+    r'|edit_file\b[\s\S]*?</edit_file>'
+    r')',
     re.DOTALL | re.IGNORECASE,
 )
-# Matches bare URLs (http/https/ftp)
-BARE_URL_RE = re.compile(r'https?://\S+|ftp://\S+', re.IGNORECASE)
+# Matches bare URLs (http/https/ftp); excludes characters that cannot appear
+# in a URL and commonly delimit HTML/markdown links or sentence boundaries.
+BARE_URL_RE = re.compile(r'https?://[^\s<>"\'()\[\]]+|ftp://[^\s<>"\'()\[\]]+', re.IGNORECASE)
 LIST_FILES_TOOL_RE = re.compile(r"<list_files\s*/>")
 READ_FILE_TOOL_RE = re.compile(r'<read_file\s+path=(["\'])([^"\']+)\1\s*/>', re.DOTALL)
 WRITE_FILE_TOOL_RE = re.compile(r'<write_file\s+path=(["\'])([^"\']+)\1\s*>(.*?)</write_file>', re.DOTALL)
