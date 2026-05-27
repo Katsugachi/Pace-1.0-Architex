@@ -13,7 +13,7 @@ Debugging Script: <br>
 py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip setuptools wheel
-python pace.py
+python dev-pace.py
 ```
 
 # QuickStart
